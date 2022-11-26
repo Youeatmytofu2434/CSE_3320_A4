@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #define WHITESPACE " \t\n"      // We want to split our command line up into tokens
                                 // so we need to define what delimits our tokens.
@@ -38,6 +39,91 @@
 #define MAX_COMMAND_SIZE 255    // The maximum command-line size
 
 #define MAX_NUM_ARGUMENTS 5     // Mav shell only supports five arguments
+
+#define NUM_BLOCKS 4226
+#define BLOCK_SIZE 8192
+#define NUM_FILES 128
+#define NUM_INODES 128
+#define MAX_BLOCKS_PER_FILE 32
+
+unsigned char data_blocks[NUM_BLOCKS][BLOCK_SIZE];
+         int  used_blocks[NUM_BLOCKS];
+
+struct directory_entry
+{
+    char * name;
+    int valid;
+    int inode_idx;
+};
+
+struct inode
+{
+    time_t date;
+    int valid;
+    int size;
+    int blocks[MAX_BLOCKS_PER_FILE];
+};
+
+struct directory_entry * directory_ptr;
+struct inode * inode_array_ptr[NUM_INODES];
+
+int findFreeDirectoryEntry( )
+{
+    int i;
+    int retval=-1;
+    for(i=0; i<128; i++)
+    {
+        if(directory_ptr[i].valid ==0)
+        {
+            retval=i;
+            break;
+        }
+    }
+    return retval;
+}
+
+int findFreeInode( )
+{
+    int i;
+    int retval=-1;
+    for(i=0; i<128; i++)
+    {
+        if(inode_array_ptr[i]->valid==0)
+        {
+            retval=i;
+            break;
+        }
+    }
+}
+
+int findFreeBlock()
+{
+    int i=0;
+    int retval=-1;
+    for(i=130; i<4226; i++)
+    {
+        if(used_blocks[i]==0)
+        {
+            retval=i;
+            break;
+        }
+    }
+    return retval;
+}
+
+int df()
+{
+    int count=0;
+    int i=0;
+    for(i=130; i<NUM_BLOCKS; i++)
+    {
+        if(used_blocks[i]==0)
+        {
+            count++;
+        }
+    }
+    return count*BLOCK_SIZE;
+}
 
 int main()
 {
