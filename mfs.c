@@ -65,18 +65,21 @@ struct inode
     int blocks[MAX_BLOCKS_PER_FILE];
 };
 
+// List of files
 struct directory_entry * directory_ptr;
+
+// Metadata about the a particular file
 struct inode * inode_array_ptr[NUM_INODES];
 
 int findFreeDirectoryEntry( )
 {
     int i;
-    int retval=-1;
-    for(i=0; i<128; i++)
+    int retval = -1;
+    for(i = 0; i < 128; i++)
     {
-        if(directory_ptr[i].valid ==0)
+        if(directory_ptr[i].valid == 0)
         {
-            retval=i;
+            retval = i;
             break;
         }
     }
@@ -112,6 +115,7 @@ int findFreeBlock()
     return retval;
 }
 
+// Find total free space in the directory
 int df()
 {
     int count=0;
@@ -191,6 +195,7 @@ void put(char * filename)
     {
         fseek(ifp, offset, SEEK_SET);
 
+        // Read data from file and store them into our FS image
         int bytes=fread(data_blocks[block_index], BLOCK_SIZE, 1, ifp);
 
         if(bytes==0 && !feof(ifp) )
@@ -232,8 +237,13 @@ void put(char * filename)
 
 int main()
 {
-
   char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
+
+  /* Might need to put this in the createfs or open*/
+  directory_ptr = malloc( NUM_FILES * sizeof(struct directory_entry));
+  for(int i = 0; i < NUM_INODES; i++)
+    inode_array_ptr[i] = malloc( sizeof( struct inode ) );
+  /* Might need to put this in the createfs or open*/
 
   while( 1 )
   {
@@ -272,20 +282,52 @@ int main()
       {
         token[token_count] = NULL;
       }
-        token_count++;
+      token_count++;
     }
 
-    // Now print the tokenized input as a debug check
-    // \TODO Remove this code and replace with your shell functionality
-
-    int token_index  = 0;
-    for( token_index = 0; token_index < token_count; token_index ++ ) 
+    if( token[0] != NULL )
     {
-      printf("token[%d] = %s\n", token_index, token[token_index] );  
+        if ( strcmp( token[0] , "quit" ) == 0 )
+        {
+            free( working_root );
+            free( directory_ptr );
+            for(int i = 0; i < NUM_INODES; i++)
+                free( inode_array_ptr[i]);
+            exit(0);
+        }
+        else if( strcmp( token[0] , "put" ) == 0 )
+        {
+            if( token[1] == NULL )
+            {
+                printf("Error: put <filename>\n");
+            }
+            else
+            {
+                printf("%s\n", token[1] );
+                put( token[1] );
+            }
+        }
+        /*
+        else if( strcmp( token[0] , "get") == 0 )
+        else if( strcmp( token[0] , "del") == 0 )
+        else if( strcmp( token[0] , "undel") == 0 )
+        else if( strcmp( token[0] , "list") == 0 )
+        else if( strcmp( token[0] , "df") == 0 )
+        else if( strcmp( token[0] , "open") == 0 )
+        else if( strcmp( token[0] , "close") == 0 )
+        else if( strcmp( token[0] , "createfs") == 0 )
+        else if( strcmp( token[0] , "savefs") == 0 )
+        else if( strcmp( token[0] , "attrib") == 0 )
+        */
     }
 
     free( working_root );
-
   }
+
+  /* Might need to put this in the createfs or open*/
+  free( directory_ptr );
+  for(int i = 0; i < NUM_INODES; i++)
+    free( inode_array_ptr[i]);
+  /* Might need to put this in the createfs or open*/
   return 0;
 }
