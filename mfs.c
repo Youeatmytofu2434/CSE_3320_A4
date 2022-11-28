@@ -240,7 +240,7 @@ void list()
     int noFilesFound = 1;
     int currentSize;
     char * currentName;
-    char * currentDate;
+    time_t currentDate;
 
     int i=0;
     for(i=0; i<128; i++)
@@ -250,10 +250,10 @@ void list()
             noFilesFound=0;
 
             currentSize=inode_array_ptr[i]->size;
-            currentDate=ctime(&(inode_array_ptr[i]->date));
+            currentDate=inode_array_ptr[i]->date;
             //TODO: Find out name
 
-            printf("%d %s \n",currentSize,currentName);
+            printf("%d %s \n",currentSize,ctime(&currentDate));
         }
     }
     if(noFilesFound==1)
