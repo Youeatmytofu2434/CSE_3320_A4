@@ -347,7 +347,7 @@ void undel( char * filename)
     }
 }
 
-void attrib(char * attribInput, char * filename)\
+void attrib(char * attribInput, char * filename)
 {
     //flag variable
     int noFilesFound = 1;
@@ -596,7 +596,7 @@ int main()
                 del( token[1] );
             }
         }
-        else if( strcmp( token[0] , "undel") == 0 )\
+        else if( strcmp( token[0] , "undel") == 0 )
         {
             if( token[1] == NULL )
             {
