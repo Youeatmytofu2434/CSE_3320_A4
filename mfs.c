@@ -290,7 +290,7 @@ void list()
 
 int isFileExist( char * filename)
 {
-    int retval = 0;
+    int retval = -1;
     int i;
     // Check if file exists in FS
     for( i = 0; i < NUM_FILES; i++ )
@@ -300,7 +300,7 @@ int isFileExist( char * filename)
         {
             if( strcmp( directory_ptr[i].name, filename ) == 0 )
             {
-                retval = 1;
+                retval = i;
                 break;
             }
         }
@@ -317,43 +317,63 @@ void get( char * filename )
         return;
     }
 
-    int retval = -1;
     int i;
     char * temp_fileName = filename;
-    char * test_fileName = "test.txt";
+    char * destination_file = "test.txt";
     
-    int foundFlag = isFileExist( temp_fileName );
-    if( foundFlag == 0 )
+    int file_idx = isFileExist( temp_fileName );
+    if( file_idx == -1 )
     {
-        printf( "get error: No file found!\n" );
+        printf( "get error: %s not found!\n", temp_fileName );
         return;
     }
 
     // Found the file in FS
-    printf( "%s found!\n", temp_fileName );
+    //printf( "%s found!\n", temp_fileName );
+
     // Copy the file to local directory using old filename
+    int offset = 0;
+    int copy_size = inode_array_ptr[file_idx]->size;
+    printf("file index: %d\n", file_idx);
+    printf("Dir inode index: %d\n", directory_ptr[file_idx].inode_idx);
+    printf("Data: %s\n", data_blocks[file_idx + 130]);
     
-
-    //int offset = 0;
-    //FILE * fp = fopen( test_fileName, "w" );
-
-    /*
-    // File names
-    for( i = 0; i < NUM_FILES; i++ )
+    
+    // Check if file exists in local directory
+    // if the file we're trying to write to exists in local directory
+    // then remove it before creating a new one
+    struct stat buf;
+    int status = stat( destination_file, &buf );
+    if( status != -1 )
     {
-        if ( directory_ptr[i].valid == 1 )
-            printf("%s\n", directory_ptr[i].name );
+        int _ = remove( destination_file );
     }
-    /*
-    // Data of files
-    for( i = 130; i < NUM_BLOCKS; i++ )
+
+    FILE * ofp = fopen( destination_file, "w" );
+    while( copy_size >= BLOCK_SIZE )
     {
-        if ( used_blocks[i] == 1 )
+        fseek( ofp, offset, SEEK_SET );
+        int bytes = fwrite( data_blocks[file_idx + 130], BLOCK_SIZE, 1, ofp );
+        // TODO: find a way to write the contents of a file if it exceeds 
+        //       BLOCK_SIZE
+        if( bytes == 0 && !feof(ofp) )
         {
-            printf( "%d: %s\n", i , data_blocks[i] );
+            printf("An error occured writing from FS.\n");
+            return;
         }
+        copy_size -= BLOCK_SIZE;
+        offset += BLOCK_SIZE;
     }
-    */
+
+    // Handles remainder
+    if( copy_size > 0)
+    {
+        fseek( ofp, offset, SEEK_SET );
+        int bytes = fwrite( data_blocks[file_idx + 130], copy_size, 1, ofp );
+    }
+    fclose(ofp);
+
+    return;
 }
 
 int main()
