@@ -235,6 +235,33 @@ void put(char * filename)
     return;
 }
 
+void list()
+{
+    int noFilesFound = 1;
+    int currentSize;
+    char * currentName;
+    char * currentDate;
+
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        if(inode_array_ptr[i]->valid==1)
+        {
+            noFilesFound=0;
+
+            currentSize=inode_array_ptr[i]->size;
+            currentDate=ctime(&(inode_array_ptr[i]->date));
+            //TODO: Find out name
+
+            printf("%d %s \n",currentSize,currentName);
+        }
+    }
+    if(noFilesFound==1)
+    {
+        printf("list: No files found.\n");
+    }
+}
+
 int main()
 {
   char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
@@ -307,12 +334,21 @@ int main()
                 put( token[1] );
             }
         }
+
+        else if( strcmp( token[0] , "df") == 0 )
+        {
+            printf("%d bytes free\n",df());
+        }
+        else if( strcmp( token[0] , "list") == 0 )
+        {
+            list();
+        }
         /*
         else if( strcmp( token[0] , "get") == 0 )
         else if( strcmp( token[0] , "del") == 0 )
         else if( strcmp( token[0] , "undel") == 0 )
-        else if( strcmp( token[0] , "list") == 0 )
-        else if( strcmp( token[0] , "df") == 0 )
+        
+        
         else if( strcmp( token[0] , "open") == 0 )
         else if( strcmp( token[0] , "close") == 0 )
         else if( strcmp( token[0] , "createfs") == 0 )
