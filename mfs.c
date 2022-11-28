@@ -63,6 +63,8 @@ struct inode
     int valid;
     int size;
     int blocks[MAX_BLOCKS_PER_FILE];
+    int hiddenAttrib;
+    int readOnlyAttrib;
 };
 
 // List of files
@@ -174,6 +176,8 @@ void put(char * filename)
     inode_array_ptr[inode_idx]->size=buf.st_size;
     inode_array_ptr[inode_idx]->date=time(NULL);
     inode_array_ptr[inode_idx]->valid=1;
+    inode_array_ptr[inode_idx]->hiddenAttrib=0;
+    inode_array_ptr[inode_idx]->readOnlyAttrib=0;
 
     FILE * ifp = fopen(filename, "r");
 
@@ -250,7 +254,7 @@ void list()
     for(i=0; i<128; i++)
     {
         //if there is a file that is referenced by the index node
-        if(inode_array_ptr[i]->valid==1)
+        if(inode_array_ptr[i]->valid==1 && inode_array_ptr[i]->hiddenAttrib!=1)
         {
             //changes flag variable to signify that a file is found
             noFilesFound=0;
@@ -298,7 +302,7 @@ void del( char * filename)
     for(i=0; i<128; i++)
     {
         //if there is a file that is referenced by the index node
-        if(inode_array_ptr[i]->valid==1)
+        if(inode_array_ptr[i]->valid==1 && inode_array_ptr[i]->readOnlyAttrib!=1)
         {
             if(strcmp(filename,directory_ptr[i].name)==0)
             {
@@ -325,7 +329,7 @@ void undel( char * filename)
     for(i=0; i<128; i++)
     {
         //if there is a file that is referenced by the index node
-        if(inode_array_ptr[i]->valid==0)
+        if(inode_array_ptr[i]->valid==1)
         {
             if(strcmp(filename,directory_ptr[i].name)==0)
             {
@@ -340,6 +344,65 @@ void undel( char * filename)
     {
         //happens when no files are found
         printf("undel: Can not find the file.\n");
+    }
+}
+
+void attrib(char * attribInput, char * filename)\
+{
+    //flag variable
+    int noFilesFound = 1;
+
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        //if there is a file that is referenced by the index node
+        if(inode_array_ptr[i]->valid==1)
+        {
+            if(strcmp(filename,directory_ptr[i].name)==0)
+            {
+                noFilesFound=0;
+                if(attribInput[0]=='+')
+                {
+                    if(attribInput[1]=='r')
+                    {
+                        inode_array_ptr[i]->readOnlyAttrib=1;
+                    }
+                    else if(attribInput[1]=='h')
+                    {
+                        inode_array_ptr[i]->hiddenAttrib=1;
+                    }
+                    else
+                    {
+                        printf("DEBUG ERROR: Bad input\n",attribInput[1]);
+                    }
+                }
+                else if(attribInput[0]=='-')
+                {
+                    if(attribInput[1]=='r')
+                    {
+                        inode_array_ptr[i]->readOnlyAttrib=0;
+                    }
+                    else if(attribInput[1]=='h')
+                    {
+                        inode_array_ptr[i]->hiddenAttrib=0;
+                    }
+                    else
+                    {
+                        printf("DEBUG ERROR: Bad input\n",attribInput[1]);
+                    }
+                }
+                else
+                {
+                    printf("Error: You must use + or - for the first character.\n");
+                }
+                break;
+            }
+        }
+    }
+    if(noFilesFound==1)
+    {
+        //happens when no files are found
+        printf("del: File not found.\n");
     }
 }
 
@@ -545,6 +608,11 @@ int main()
                 undel( token[1] );
             }
         }
+        else if( strcmp( token[0] , "attrib") == 0 )
+        {
+            //TODO: Error handling on no file later.
+            attrib(token[1],token[2]);
+        }
         /*
         
         
@@ -552,7 +620,7 @@ int main()
         else if( strcmp( token[0] , "close") == 0 )
         else if( strcmp( token[0] , "createfs") == 0 )
         else if( strcmp( token[0] , "savefs") == 0 )
-        else if( strcmp( token[0] , "attrib") == 0 )
+        
         */
     }
 
