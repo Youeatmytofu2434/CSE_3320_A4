@@ -431,10 +431,7 @@ int main()
         if ( strcmp( token[0] , "quit" ) == 0 )
         {
             free( working_root );
-            free( directory_ptr );
-            for(int i = 0; i < NUM_INODES; i++)
-                free( inode_array_ptr[i]);
-            exit(0);
+            break;
         }
         else if( strcmp( token[0] , "put" ) == 0 )
         {
