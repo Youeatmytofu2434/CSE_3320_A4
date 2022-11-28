@@ -288,6 +288,26 @@ void list()
     }
 }
 
+int isFileExist( char * filename)
+{
+    int retval = 0;
+    int i;
+    // Check if file exists in FS
+    for( i = 0; i < NUM_FILES; i++ )
+    {
+        // avoid segfault
+        if ( directory_ptr[i].valid == 1 )
+        {
+            if( strcmp( directory_ptr[i].name, filename ) == 0 )
+            {
+                retval = 1;
+                break;
+            }
+        }
+    }
+    return retval;
+}
+
 void get( char * filename )
 {
     // Case no files in the directory
@@ -301,21 +321,14 @@ void get( char * filename )
     int i;
     char * temp_fileName = filename;
     char * test_fileName = "test.txt";
-
-    // Check if file exists in FS
-    for( i = 0; i < NUM_FILES; i++ )
-    {
-        // avoid segfault
-        if ( directory_ptr[i].valid == 1 )
-        {
-            if( strcmp( directory_ptr[i].name, temp_fileName ) != 0 )
-            {
-                printf( "%s not found!\n", temp_fileName );
-                return;
-            }
-        }
-    }
     
+    int foundFlag = isFileExist( temp_fileName );
+    if( foundFlag == 0 )
+    {
+        printf( "get error: No file found!\n" );
+        return;
+    }
+
     // Found the file in FS
     printf( "%s found!\n", temp_fileName );
     // Copy the file to local directory using old filename
