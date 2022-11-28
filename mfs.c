@@ -288,6 +288,61 @@ void list()
     }
 }
 
+
+void del( char * filename)
+{
+    //flag variable
+    int noFilesFound = 1;
+
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        //if there is a file that is referenced by the index node
+        if(inode_array_ptr[i]->valid==1)
+        {
+            if(strcmp(filename,directory_ptr[i].name)==0)
+            {
+                noFilesFound=0;
+                inode_array_ptr[i]->valid=0;
+                printf("File deleted.\n");
+                break;
+            }
+        }
+    }
+    if(noFilesFound==1)
+    {
+        //happens when no files are found
+        printf("del: File not found.\n");
+    }
+}
+
+void undel( char * filename)
+{
+    //flag variable
+    int noFilesFound = 1;
+
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        //if there is a file that is referenced by the index node
+        if(inode_array_ptr[i]->valid==0)
+        {
+            if(strcmp(filename,directory_ptr[i].name)==0)
+            {
+                noFilesFound=0;
+                inode_array_ptr[i]->valid=1;
+                printf("File undeleted.\n");
+                break;
+            }
+        }
+    }
+    if(noFilesFound==1)
+    {
+        //happens when no files are found
+        printf("undel: Can not find the file.\n");
+    }
+}
+
 int isFileExist( char * filename)
 {
     int retval = -1;
@@ -466,9 +521,31 @@ int main()
                 get( token[1] );
             }
         }
-        /*
         else if( strcmp( token[0] , "del") == 0 )
-        else if( strcmp( token[0] , "undel") == 0 )
+        {
+            if( token[1] == NULL )
+            {
+                printf("Error: put <filename>\n");
+            }
+            else
+            {
+                //printf("%s\n", token[1] );
+                del( token[1] );
+            }
+        }
+        else if( strcmp( token[0] , "undel") == 0 )\
+        {
+            if( token[1] == NULL )
+            {
+                printf("Error: put <filename>\n");
+            }
+            else
+            {
+                //printf("%s\n", token[1] );
+                undel( token[1] );
+            }
+        }
+        /*
         
         
         else if( strcmp( token[0] , "open") == 0 )
