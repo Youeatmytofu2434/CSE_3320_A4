@@ -1,0 +1,2 @@
+2.2.2 If no new filename is specified the get command shall copy the file to the current 
+working directory using the old filename. 

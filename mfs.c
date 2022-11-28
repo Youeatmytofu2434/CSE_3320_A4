@@ -288,6 +288,61 @@ void list()
     }
 }
 
+void get( char * filename )
+{
+    // Case no files in the directory
+    if( directory_ptr[0].valid == 0 )
+    {
+        printf( "get error: No file in dir!\n" );
+        return;
+    }
+
+    int retval = -1;
+    int i;
+    char * temp_fileName = filename;
+    char * test_fileName = "test.txt";
+
+    // Check if file exists in FS
+    for( i = 0; i < NUM_FILES; i++ )
+    {
+        // avoid segfault
+        if ( directory_ptr[i].valid == 1 )
+        {
+            if( strcmp( directory_ptr[i].name, temp_fileName ) != 0 )
+            {
+                printf( "%s not found!\n", temp_fileName );
+                return;
+            }
+        }
+    }
+    
+    // Found the file in FS
+    printf( "%s found!\n", temp_fileName );
+    // Copy the file to local directory using old filename
+    
+
+    //int offset = 0;
+    //FILE * fp = fopen( test_fileName, "w" );
+
+    /*
+    // File names
+    for( i = 0; i < NUM_FILES; i++ )
+    {
+        if ( directory_ptr[i].valid == 1 )
+            printf("%s\n", directory_ptr[i].name );
+    }
+    /*
+    // Data of files
+    for( i = 130; i < NUM_BLOCKS; i++ )
+    {
+        if ( used_blocks[i] == 1 )
+        {
+            printf( "%d: %s\n", i , data_blocks[i] );
+        }
+    }
+    */
+}
+
 int main()
 {
   char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
@@ -356,7 +411,7 @@ int main()
             }
             else
             {
-                printf("%s\n", token[1] );
+                //printf("%s\n", token[1] );
                 put( token[1] );
             }
         }
@@ -369,8 +424,19 @@ int main()
         {
             list();
         }
+        else if( strcmp( token[0] , "get" ) == 0 )
+        {
+            // Prints error if not enough arguments
+            if( token[1] == NULL )
+            {
+                printf("Error: get <filename> (optional)<newfilename>\n");
+            }
+            else
+            {
+                get( token[1] );
+            }
+        }
         /*
-        else if( strcmp( token[0] , "get") == 0 )
         else if( strcmp( token[0] , "del") == 0 )
         else if( strcmp( token[0] , "undel") == 0 )
         
