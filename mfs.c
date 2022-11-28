@@ -239,8 +239,10 @@ void list()
 {
     int noFilesFound = 1;
     int currentSize;
-    char * currentName;
     time_t currentDate;
+
+    char * currentName;
+    
 
     int i=0;
     for(i=0; i<128; i++)
@@ -251,9 +253,23 @@ void list()
 
             currentSize=inode_array_ptr[i]->size;
             currentDate=inode_array_ptr[i]->date;
-            //TODO: Find out name
+            
+            currentName=(char *) malloc(100);
+            int j=0;
+            for(j=0; j<128; j++)
+            {
+                if(directory_ptr[j].inode_idx==i)
+                {
+                    
+                    strcpy(currentName,directory_ptr[j].name);
+                    
+                    break;
+                }
+            }
+            
 
-            printf("%d %s \n",currentSize,ctime(&currentDate));
+            printf("%d %s %s \n",currentSize,ctime(&currentDate),currentName);
+            free(currentName);
         }
     }
     if(noFilesFound==1)
