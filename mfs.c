@@ -373,7 +373,7 @@ void attrib(char * attribInput, char * filename)\
                     }
                     else
                     {
-                        printf("DEBUG ERROR: Bad input\n",attribInput[1]);
+                        printf("Error: Invalid second token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
                     }
                 }
                 else if(attribInput[0]=='-')
@@ -388,12 +388,12 @@ void attrib(char * attribInput, char * filename)\
                     }
                     else
                     {
-                        printf("DEBUG ERROR: Bad input\n",attribInput[1]);
+                        printf("Error: Invalid second token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
                     }
                 }
                 else
                 {
-                    printf("Error: You must use + or - for the first character.\n");
+                    printf("Error: Invalid first token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
                 }
                 break;
             }
@@ -402,7 +402,7 @@ void attrib(char * attribInput, char * filename)\
     if(noFilesFound==1)
     {
         //happens when no files are found
-        printf("del: File not found.\n");
+        printf("attrib: File not found.\n");
     }
 }
 
