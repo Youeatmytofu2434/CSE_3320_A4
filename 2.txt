@@ -1,16 +1,160 @@
-2.2.2 If no new filename is specified the get command shall copy the file to the current 
-working directory using the old filename. 
-3.4: Tabs or spaces shall be used to indent the code. Your code must use one or the 
-other. All indentation must be consistent.  
-3.5: No line of code shall exceed 100 characters. 
-3.6: Each source code file shall have the following header filled out:  
-3.7: All code must be well commented. This means descriptive comments that tell the 
-intent of the code, not just what the code is executing. The following explains the 
-intent:  
-3.8: Keep your curly brace placement consistent. If you place curly braces on a new 
-line , always place curly braces on a new end. Don’t mix end line brace placement with 
-new line brace placement.  
-3.9: Each function should have a header that describes its name, any parameters 
-expected, any return values, as well as a description of what the function does.  
-3.10: If your solution uses multiple source files you must also submit a cmake file or a 
-makefile. Submissions without a cmake file or makefile will have a 20 pt deduction.
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file
+2.1 The put command shall allow the user to put a new file into the file 
+2.1 The put command shall allow the user to put a new file into the file 
