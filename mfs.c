@@ -118,6 +118,8 @@ int findFreeBlock()
 // Find total free space in the directory
 int df()
 {
+    //each unused block represents free space, and each block represents 8192 bytes of size
+    //the program iterates through the memory blocks to determine which blocks are used or unused
     int count=0;
     int i=0;
     for(i=130; i<NUM_BLOCKS; i++)
@@ -237,43 +239,51 @@ void put(char * filename)
 
 void list()
 {
+    //flag variable
     int noFilesFound = 1;
+    //initialization
     int currentSize;
     time_t currentDate;
-
     char * currentName;
-    
 
     int i=0;
     for(i=0; i<128; i++)
     {
+        //if there is a file that is referenced by the index node
         if(inode_array_ptr[i]->valid==1)
         {
+            //changes flag variable to signify that a file is found
             noFilesFound=0;
 
+            //sets variables to be printed later
             currentSize=inode_array_ptr[i]->size;
             currentDate=inode_array_ptr[i]->date;
-            
-            currentName=(char *) malloc(100);
+
+            //allocates memory for the name variable to be printed later
+            //j is used as a failsafe measure in case we need to locate the inode
             int j=0;
             for(j=0; j<128; j++)
             {
+                //makes the name of the file into the variable currentName...
+                //...when the directory has found the file with the correct inode ptr
                 if(directory_ptr[j].inode_idx==i)
                 {
-                    
-                    strcpy(currentName,directory_ptr[j].name);
+                    currentName=(char *) malloc(strlen(directory_ptr[i].name));
+                    strncpy(currentName,directory_ptr[i].name,strlen(directory_ptr[i].name));
                     
                     break;
                 }
             }
             
 
-            printf("%d %s %s \n",currentSize,ctime(&currentDate),currentName);
+            printf("%d %s %s \n",currentSize,currentName,ctime(&currentDate));
+            //frees to prevent the accumulation of garbage
             free(currentName);
         }
     }
     if(noFilesFound==1)
     {
+        //happens when no files are found
         printf("list: No files found.\n");
     }
 }
