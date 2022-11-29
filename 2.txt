@@ -1,160 +1,38 @@
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file
-2.1 The put command shall allow the user to put a new file into the file 
-2.1 The put command shall allow the user to put a new file into the file 
+3.4: Tabs or spaces shall be used to indent the code. Your code must use one or the 
+other. All indentation must be consistent.  
+3.5: No line of code shall exceed 100 characters. 
+3.6: Each source code file shall have the following header filled out:  
+3.7: All code must be well commented. This means descriptive comments that tell the 
+intent of the code, not just what the code is executing. The following explains the 
+intent:  
+3.8: Keep your curly brace placement consistent. If you place curly braces on a new 
+line , always place curly braces on a new end. Don’t mix end line brace placement with 
+new line brace placement.  
+3.9: Each function should have a header that describes its name, any parameters 
+expected, any return values, as well as a description of what the function does.  
+3.10: If your solution uses multiple source files you must also submit a cmake file or a 
+makefile. Submissions without a cmake file or makefile will have a 20 pt deduction.  
+Grading  
+This assignment will be graded in the container. The assignment will be graded out of 
+100 points. Compiler warnings are there to tell you something is not correct. Pay 
+attention to them and you will save yourself a lot of late nights debugging code. Code 
+that does not compile will earn 0.  
+This assignment must be 100% your own work. No code may be copied from friends, 
+previous students, books, web pages, etc. All code submitted is checked against a 
+database of previous semester’s graded assignments, current student’s code and common 
+web sources. Code that is copied from an external source will result in a 0 for the 
+assignment and referral to the Office of Student Conduct.  
+Hints and Suggestions  
+Reuse the code from the mav shell. Your parser and main loop logic are already done. It 
+will allow you to concentrate on the new functionality you have to implement and not 
+on reimplementing code you’ve already written.  
+Look at the man page for stat. man 2 stat . You will need the metadata it gives you.  
+I have placed a file call block_copy_example.c under this assignment on github at 
+https://github.com/CSE3320/Dropbox-Assignment . That code will read a file, place 
+the data into blocks, then open a new file and write those blocks to a new file.  
+Compile it with: 
+gcc block_copy_example.c -o fcopy You can then run it by: 
+./fcopy <filename1> <filename2>  
+This code shows how to take a file, chop it up into block size chunks, store it in a “disk 
+block”-like data structure and then reform the file. This code does not look for free 
+blocks. Modify it to select free blocks if you use this code.

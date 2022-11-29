@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_PLAYERS 10
 struct Player 
@@ -12,18 +13,16 @@ struct Player * players[MAX_PLAYERS];
 
 int main()
 {
+    int array[10];
+    //memset( array, 0, sizeof(array) );
     int i;
-    for(i = 0; i < MAX_PLAYERS; i++)
+    for( i = 0; i < 10; i++)
     {
-        players[i] = malloc(sizeof(struct Player));
+        array[i] = i + 1;
     }
-    for(i = 0; i < MAX_PLAYERS; i++)
+    for( i = 0; i < 10; i++)
     {
-        players[i]->age = 10;
-    }
-    for(i = 0; i < MAX_PLAYERS; i++)
-    {
-        printf("%d\n", players[i]->age);
+        printf("Hello: %d\n", array[i]);
     }
     return 0;
 }

@@ -193,10 +193,8 @@ void put(char * filename)
         return;
     }
 
-    
-
-    
-
+    /*
+    int index = 0;
     while(copy_size>=BLOCK_SIZE)
     {
         fseek(ifp, offset, SEEK_SET);
@@ -210,13 +208,13 @@ void put(char * filename)
             return;
         }
 
-
+        inode_array_ptr[inode_idx]->blocks[index] = block_index;
         used_blocks[block_index]=1;
-        //inode_array_ptr[inode_idx]->blocks[findFreeInode]
 
         clearerr(ifp);
         copy_size   -=BLOCK_SIZE;
         offset      +=BLOCK_SIZE;
+        index       ++;
     }
     //handles the remainder
     if(copy_size>0)
@@ -228,16 +226,55 @@ void put(char * filename)
             //cleanup a bunch of directory and inode stuff
             return;
         }
-
+        inode_array_ptr[inode_idx]->blocks[index] = block_index;
         used_blocks[block_index]=1;
-
-        // inode_array_ptr[inode_idx]->blocks[findFreeInode()]
-
+        
 
         fseek(ifp, offset, SEEK_SET);
         int bytes=fread(data_blocks[block_index], copy_size, 1, ifp);
     }
+    */
+    
+    int index = 0;
+    int bytes = 0;
+    while( copy_size > 0 )
+    {
+        fseek( ifp, bytes, SEEK_SET);
+        if( copy_size < BLOCK_SIZE )
+        {
+            bytes = copy_size;
+        }
+        else
+        {
+            bytes = BLOCK_SIZE;
+        }
+        int temp = fread(data_blocks[block_index], bytes, 1, ifp);
+        if( temp == 0 && !feof( ifp ) )
+        {
+            printf("An error occured reading from the input file.\n");
+            return;
+        }
+        clearerr( ifp );
+        inode_array_ptr[inode_idx]->blocks[index] = block_index;
+        //printf("Block Index: %d\n", block_index);
+        //printf("Inode Index: %d\n", inode_idx);
+        //printf("Index: %d\n", index);
+        used_blocks[block_index] = 1;
+        copy_size   -= bytes;
+        offset      += bytes;
+        block_index = findFreeBlock();
+        index       ++;
+    }
+    
+    for( int i = 130; i < NUM_BLOCKS; i++ )
+    {
+        if( used_blocks[i] == 1)
+        {
+            printf("%d: %s\n", i, data_blocks[i]);
+        }
 
+    }
+    fclose( ifp );
     return;
 }
 
@@ -274,22 +311,23 @@ void list()
                 {
                     currentName=(char *) malloc(strlen(directory_ptr[i].name));
                     strncpy(currentName,directory_ptr[i].name,strlen(directory_ptr[i].name));
-                    
                     break;
                 }
             }
-            
-
             printf("%d %s %s \n",currentSize,currentName,ctime(&currentDate));
-            //frees to prevent the accumulation of garbage
-            free(currentName);
+            int temp_size = strlen( currentName );
+            memset( currentName, 0, temp_size );
+            
         }
     }
+
     if(noFilesFound==1)
     {
         //happens when no files are found
         printf("list: No files found.\n");
     }
+
+    free(currentName);
 }
 
 
@@ -426,7 +464,7 @@ int isFileExist( char * filename)
     return retval;
 }
 
-void get( char * filename )
+void get( char * filename, char * output_fileName )
 {
     // Case no files in the directory
     if( directory_ptr[0].valid == 0 )
@@ -450,12 +488,22 @@ void get( char * filename )
     //printf( "%s found!\n", temp_fileName );
 
     // Copy the file to local directory using old filename
-    int offset = 0;
-    int copy_size = inode_array_ptr[file_idx]->size;
-    printf("file index: %d\n", file_idx);
-    printf("Dir inode index: %d\n", directory_ptr[file_idx].inode_idx);
-    printf("Data: %s\n", data_blocks[file_idx + 130]);
-    
+    //printf("file index: %d\n", file_idx);
+    //printf("Dir inode index: %d\n", directory_ptr[file_idx].inode_idx);
+    //printf("Data: %s\n", data_blocks[file_idx + 130]);
+
+    /*
+    for( i = 0; i < MAX_BLOCKS_PER_FILE; i++ )
+    {
+        if( inode_array_ptr[i]->valid == 1)
+        {
+            printf("%d block:", i);
+            for( int j = 0; j < MAX_BLOCKS_PER_FILE; j++)
+                if( inode_array_ptr[i]->blocks[j] != 0)
+                    printf("%d\n", inode_array_ptr[i]->blocks[j]);
+        }
+    }  
+    */
     
     // Check if file exists in local directory
     // if the file we're trying to write to exists in local directory
@@ -467,30 +515,57 @@ void get( char * filename )
         int _ = remove( destination_file );
     }
 
+    
+    int offset = 0;
+    int copy_size = inode_array_ptr[file_idx]->size;
     FILE * ofp = fopen( destination_file, "w" );
-    while( copy_size >= BLOCK_SIZE )
+    while( copy_size > 0 )
     {
-        fseek( ofp, offset, SEEK_SET );
-        int bytes = fwrite( data_blocks[file_idx + 130], BLOCK_SIZE, 1, ofp );
-        // TODO: find a way to write the contents of a file if it exceeds 
-        //       BLOCK_SIZE
-        if( bytes == 0 && !feof(ofp) )
+        // If the remaining number of bytes we need to copy is less than BLOCK_SIZE then
+        // only copy the amount that remains. If we copied BLOCK_SIZE number of bytes we'd
+        // end up with garbage at the end of the file.
+        int remainding_bytes;
+        if( copy_size < BLOCK_SIZE )
         {
-            printf("An error occured writing from FS.\n");
-            return;
+            remainding_bytes = copy_size;
         }
+        else
+        {
+            remainding_bytes = BLOCK_SIZE;
+        }
+        
+        int temp = 0;
+        for( i = 0; i < MAX_BLOCKS_PER_FILE; i++ )
+        {
+            int data_location = inode_array_ptr[file_idx]->blocks[i];
+            if( data_location != 0 && used_blocks[data_location] == 1)
+            {
+                // Write num_bytes number of bytes from our data array into our output file.
+                temp = fwrite( data_blocks[data_location], remainding_bytes, 1, ofp );
+            }
+        }
+        
+        // Warns the users if an unexpected error occured while 
+        // trying to write to a file.
+        if(temp == 0 && !feof(ofp) )
+        {
+            printf("An error occured writing to output file.\n");
+            break;
+        }
+
+        // Reduce the amount of bytes remaining to copy, increase the offset into the file
+        // and increment the block_index to move us to the next data block.
         copy_size -= BLOCK_SIZE;
-        offset += BLOCK_SIZE;
-    }
+        offset    += BLOCK_SIZE;
 
-    // Handles remainder
-    if( copy_size > 0)
-    {
-        fseek( ofp, offset, SEEK_SET );
-        int bytes = fwrite( data_blocks[file_idx + 130], copy_size, 1, ofp );
+        // Since we've copied from the point pointed to by our current file pointer, increment
+        // offset number of bytes so we will be ready to copy to the next area of our output file.
+        fseek( ofp, remainding_bytes, SEEK_SET );
     }
+    
+    
     fclose(ofp);
-
+    
     return;
 }
 
@@ -579,16 +654,21 @@ int main()
             {
                 printf("Error: get <filename> (optional)<newfilename>\n");
             }
+            // not providing output file
+            else if( token[2] == NULL ) 
+            {
+                get( token[1], token[1] );
+            }
             else
             {
-                get( token[1] );
+                get( token[1], token[2] );
             }
         }
         else if( strcmp( token[0] , "del") == 0 )
         {
             if( token[1] == NULL )
             {
-                printf("Error: put <filename>\n");
+                printf("Error: del <filename>\n");
             }
             else
             {
@@ -600,7 +680,7 @@ int main()
         {
             if( token[1] == NULL )
             {
-                printf("Error: put <filename>\n");
+                printf("Error: undel <filename>\n");
             }
             else
             {
