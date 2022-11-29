@@ -134,6 +134,26 @@ int df()
     return count*BLOCK_SIZE;
 }
 
+int isFileExist( char * filename)
+{
+    int retval = -1;
+    int i;
+    // Check if file exists in FS
+    for( i = 0; i < NUM_FILES; i++ )
+    {
+        // avoid segfault
+        if ( directory_ptr[i].valid == 1 )
+        {
+            if( strcmp( directory_ptr[i].name, filename ) == 0 )
+            {
+                retval = i;
+                break;
+            }
+        }
+    }
+    return retval;
+}
+
 void put(char * filename)
 {
     struct stat buf;
@@ -254,26 +274,34 @@ void put(char * filename)
             printf("An error occured reading from the input file.\n");
             return;
         }
+
+        // Clear EOF flag
         clearerr( ifp );
+
+        // save the blocks of data
         inode_array_ptr[inode_idx]->blocks[index] = block_index;
         //printf("Block Index: %d\n", block_index);
         //printf("Inode Index: %d\n", inode_idx);
         //printf("Index: %d\n", index);
         used_blocks[block_index] = 1;
-        copy_size   -= bytes;
-        offset      += bytes;
-        block_index = findFreeBlock();
-        index       ++;
+        copy_size               -= bytes;
+        offset                  += bytes;
+        block_index              = findFreeBlock();
+        index                   ++;
     }
     
+    
+    printf( "Data Stored:\n" );
     for( int i = 130; i < NUM_BLOCKS; i++ )
     {
         if( used_blocks[i] == 1)
         {
-            printf("%d: %s\n", i, data_blocks[i]);
+            printf( "%d:\n", i );
+            printf("%s\n", data_blocks[i]);
         }
 
     }
+    
     fclose( ifp );
     return;
 }
@@ -282,12 +310,13 @@ void list()
 {
     //flag variable
     int noFilesFound = 1;
+    
     //initialization
     int currentSize;
     time_t currentDate;
-    char * currentName;
 
     int i=0;
+    /*
     for(i=0; i<128; i++)
     {
         //if there is a file that is referenced by the index node
@@ -320,14 +349,32 @@ void list()
             
         }
     }
+    */
+
+    for( i = 0; i < NUM_FILES; i++ )
+    {
+        if( directory_ptr[i].valid == 1 
+            && inode_array_ptr[i]->hiddenAttrib != 1 )
+        { 
+            //char * currentName; 
+            noFilesFound = 0;
+            currentSize = inode_array_ptr[i]->size;
+            currentDate = inode_array_ptr[i]->date;
+            int temp_fileSize = strlen( directory_ptr[i].name );
+            //currentName = (char*)malloc( temp_fileSize );
+            char * currentName = directory_ptr[i].name;
+            //strncpy( currentName, directory_ptr[i].name, temp_fileSize );
+            printf( "%d %s %s \n", currentSize, directory_ptr[i].name, ctime( &currentDate ) );
+            //free(currentName);
+        }
+    }
 
     if(noFilesFound==1)
     {
         //happens when no files are found
         printf("list: No files found.\n");
     }
-
-    free(currentName);
+    return;
 }
 
 
@@ -444,26 +491,6 @@ void attrib(char * attribInput, char * filename)
     }
 }
 
-int isFileExist( char * filename)
-{
-    int retval = -1;
-    int i;
-    // Check if file exists in FS
-    for( i = 0; i < NUM_FILES; i++ )
-    {
-        // avoid segfault
-        if ( directory_ptr[i].valid == 1 )
-        {
-            if( strcmp( directory_ptr[i].name, filename ) == 0 )
-            {
-                retval = i;
-                break;
-            }
-        }
-    }
-    return retval;
-}
-
 void get( char * filename, char * output_fileName )
 {
     // Case no files in the directory
@@ -475,7 +502,7 @@ void get( char * filename, char * output_fileName )
 
     int i;
     char * temp_fileName = filename;
-    char * destination_file = "test.txt";
+    char * destination_file = output_fileName;
     
     int file_idx = isFileExist( temp_fileName );
     if( file_idx == -1 )
@@ -547,11 +574,14 @@ void get( char * filename, char * output_fileName )
         
         // Warns the users if an unexpected error occured while 
         // trying to write to a file.
-        if(temp == 0 && !feof(ofp) )
+        if(temp == 0 && !feof( ofp ) )
         {
             printf("An error occured writing to output file.\n");
             break;
         }
+
+        // Clear EOF Flag
+        clearerr( ofp );
 
         // Reduce the amount of bytes remaining to copy, increase the offset into the file
         // and increment the block_index to move us to the next data block.
