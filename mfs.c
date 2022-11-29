@@ -569,6 +569,99 @@ void get( char * filename, char * output_fileName )
     return;
 }
 
+void createfs(char * filename)
+{
+    FILE *ofp;
+
+    /*
+    //creates a new name to create a file
+    char * newFsname;
+    char * dotBinExtension;
+    newFsname=(char *)malloc(strlen(fsname)+4);
+    dotBinExtension=(char *)malloc(4);
+    strncpy(dotBinExtension,".bin",4);
+    strncpy(newFsname,fsname,strlen(fsname));
+    strncat(newFsname,dotBinExtension,4);
+    free(dotBinExtension);
+    //memory allocated with dotBin is no longer needed
+    */
+
+    ofp = fopen( filename, "w" );
+    //creates a new file for writing
+
+    //iterates through inode list to physically write everything from there to a binary file
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        //responsible for writing all inodes into disk
+        fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
+    }
+    
+    i=130;
+    for(i=130; i<NUM_BLOCKS; i++)
+    {    
+        //responsible for writing all blocks on the directory of mfs into disk
+        fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
+    }
+    
+
+    fclose(ofp);
+    //free(newFsname);
+    //memory for newFsname is no longer needed
+    return;
+}
+
+void open( char * filename)
+{
+    //TODO: FInd out if file is not found/exists
+
+    
+    //creates a new file for writing
+    FILE *ofp;
+    ofp = fopen( filename, "r" );
+    //finds the beginning of the file
+    //fseek( ofp, 0, SEEK_SET );
+
+    //iterates through inode list to physically write everything from there to a binary file
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        fread(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
+    }
+    i=130;
+    for(i=130; i<NUM_BLOCKS; i++)
+    {   
+        fread(&data_blocks[i], BLOCK_SIZE, 1, ofp);
+    }
+    
+    fclose(ofp);
+    return;
+}
+
+void savefs(char * filename)
+{
+    FILE *ofp;
+    ofp = fopen( filename, "w" );
+
+    //iterates through inode list to physically write everything from there to a binary file
+    int i=0;
+    for(i=0; i<128; i++)
+    {
+        //responsible for writing all inodes into disk
+        fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
+    }
+    
+    i=130;
+    for(i=130; i<NUM_BLOCKS; i++)
+    {    
+        //responsible for writing all blocks on the directory of mfs into disk
+        fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
+    }
+    
+    fclose(ofp);
+    return;
+}
+
 int main()
 {
   char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
@@ -690,16 +783,28 @@ int main()
         }
         else if( strcmp( token[0] , "attrib") == 0 )
         {
-            //TODO: Error handling on no file later.
+            //TODO: Error handling on no arguments later.
             attrib(token[1],token[2]);
+        }
+        else if( strcmp( token[0] , "createfs") == 0 )
+        {
+            //TODO: Error handling on no file name later
+            createfs(token[1]);
+        }
+        else if( strcmp( token[0] , "open") == 0 )
+        {
+            //TODO: Error handling on no file name later
+            open(token[1]);
+        }
+        
+        else if( strcmp( token[0] , "savefs") == 0 )
+        {
+            savefs(token[1]);
         }
         /*
         
         
-        else if( strcmp( token[0] , "open") == 0 )
         else if( strcmp( token[0] , "close") == 0 )
-        else if( strcmp( token[0] , "createfs") == 0 )
-        else if( strcmp( token[0] , "savefs") == 0 )
         
         */
     }
