@@ -290,14 +290,14 @@ void put(char * filename)
         index                   ++;
     }
     
-    
+    printf( "Size of %s: %d bytes\n", filename, inode_array_ptr[inode_idx]->size );
     printf( "Data Stored:\n" );
     for( int i = 130; i < NUM_BLOCKS; i++ )
     {
         if( used_blocks[i] == 1)
         {
-            printf( "%d:\n", i );
-            printf("%s\n", data_blocks[i]);
+            printf( "%d: %d bytes\n", i, strlen( data_blocks[i] ) );
+            printf( "%s\n", data_blocks[i] );
         }
 
     }
@@ -363,17 +363,19 @@ void list()
             int temp_fileSize = strlen( directory_ptr[i].name );
             //currentName = (char*)malloc( temp_fileSize );
             char * currentName = directory_ptr[i].name;
-            //strncpy( currentName, directory_ptr[i].name, temp_fileSize );
+            strncpy( currentName, directory_ptr[i].name, temp_fileSize );
             printf( "%d %s %s \n", currentSize, directory_ptr[i].name, ctime( &currentDate ) );
             //free(currentName);
         }
     }
+
 
     if(noFilesFound==1)
     {
         //happens when no files are found
         printf("list: No files found.\n");
     }
+    
     return;
 }
 
@@ -428,7 +430,7 @@ void undel( char * filename)
     if(noFilesFound==1)
     {
         //happens when no files are found
-        printf("undel: Can not find the file.\n");
+        printf("undel: Cannot find the file.\n");
     }
 }
 
@@ -616,24 +618,26 @@ void createfs(char * filename)
     //memory allocated with dotBin is no longer needed
     */
 
-    ofp = fopen( filename, "w" );
+    ofp = fopen( filename, "wb" );
+    int offset = 0;
     //creates a new file for writing
-
+    fseek( ofp, offset, SEEK_SET );
     //iterates through inode list to physically write everything from there to a binary file
-    int i=0;
-    for(i=0; i<128; i++)
+    int i = 0;
+    
+    fwrite(directory_ptr, sizeof(struct directory_entry), 1, ofp);
+
+    for( i = 0; i < NUM_INODES; i++ )
     {
-        //responsible for writing all inodes into disk
         fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
     }
     
-    i=130;
-    for(i=130; i<NUM_BLOCKS; i++)
+    for( i = 130; i < NUM_BLOCKS; i++ )
     {    
         //responsible for writing all blocks on the directory of mfs into disk
         fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
     }
-    
+
 
     fclose(ofp);
     //free(newFsname);
@@ -648,20 +652,25 @@ void open( char * filename)
     
     //creates a new file for writing
     FILE *ofp;
-    ofp = fopen( filename, "r" );
+    ofp = fopen( filename, "rb" );
+    int offset = 0;
     //finds the beginning of the file
     //fseek( ofp, 0, SEEK_SET );
-
+    fseek( ofp, offset, SEEK_SET );
     //iterates through inode list to physically write everything from there to a binary file
     int i=0;
-    for(i=0; i<128; i++)
+
+    fread(directory_ptr, sizeof(struct directory_entry), 1, ofp);
+    
+
+    for(i=0; i<NUM_INODES; i++)
     {
         fread(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
     }
-    i=130;
+
     for(i=130; i<NUM_BLOCKS; i++)
     {   
-        fread(&data_blocks[i], BLOCK_SIZE, 1, ofp);
+        fread(data_blocks[i], BLOCK_SIZE, 1, ofp);
     }
     
     fclose(ofp);
@@ -671,17 +680,20 @@ void open( char * filename)
 void savefs(char * filename)
 {
     FILE *ofp;
-    ofp = fopen( filename, "w" );
-
+    ofp = fopen( filename, "wb" );
+    int offset = 0;
+    fseek( ofp, offset, SEEK_SET );
     //iterates through inode list to physically write everything from there to a binary file
     int i=0;
-    for(i=0; i<128; i++)
+
+    fwrite(directory_ptr, sizeof(struct directory_entry), 1, ofp);
+
+    for(i=0; i<NUM_INODES; i++)
     {
         //responsible for writing all inodes into disk
         fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
     }
     
-    i=130;
     for(i=130; i<NUM_BLOCKS; i++)
     {    
         //responsible for writing all blocks on the directory of mfs into disk
@@ -694,16 +706,15 @@ void savefs(char * filename)
 
 int main()
 {
-  char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
+    /* Might need to put this in the createfs or open*/
+    directory_ptr = malloc( NUM_FILES * sizeof(struct directory_entry));
+    for(int i = 0; i < NUM_INODES; i++)
+        inode_array_ptr[i] = malloc( sizeof( struct inode ) );
+    /* Might need to put this in the createfs or open*/
+    char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
 
-  /* Might need to put this in the createfs or open*/
-  directory_ptr = malloc( NUM_FILES * sizeof(struct directory_entry));
-  for(int i = 0; i < NUM_INODES; i++)
-    inode_array_ptr[i] = malloc( sizeof( struct inode ) );
-  /* Might need to put this in the createfs or open*/
-
-  while( 1 )
-  {
+    while( 1 )
+    {
     // Print out the mfs prompt
     printf ("mfs> ");
 
@@ -718,11 +729,11 @@ int main()
     char *token[MAX_NUM_ARGUMENTS];
 
     int   token_count = 0;                                 
-                                                           
+                                                            
     // Pointer to point to the token
     // parsed by strsep
     char *arg_ptr;                                         
-                                                           
+                                                            
     char *working_str  = strdup( cmd_str );                
 
     // we are going to move the working_str pointer so
@@ -732,14 +743,14 @@ int main()
 
     // Tokenize the input stringswith whitespace used as the delimiter
     while ( ( (arg_ptr = strsep(&working_str, WHITESPACE ) ) != NULL) && 
-              (token_count<MAX_NUM_ARGUMENTS))
+                (token_count<MAX_NUM_ARGUMENTS))
     {
-      token[token_count] = strndup( arg_ptr, MAX_COMMAND_SIZE );
-      if( strlen( token[token_count] ) == 0 )
-      {
+        token[token_count] = strndup( arg_ptr, MAX_COMMAND_SIZE );
+        if( strlen( token[token_count] ) == 0 )
+        {
         token[token_count] = NULL;
-      }
-      token_count++;
+        }
+        token_count++;
     }
 
     if( token[0] != NULL )
@@ -840,12 +851,12 @@ int main()
     }
 
     free( working_root );
-  }
+    }
 
-  /* Might need to put this in the createfs or open*/
-  free( directory_ptr );
-  for(int i = 0; i < NUM_INODES; i++)
+    /* Might need to put this in the createfs or open*/
+    free( directory_ptr );
+    for(int i = 0; i < NUM_INODES; i++)
     free( inode_array_ptr[i]);
-  /* Might need to put this in the createfs or open*/
-  return 0;
+    /* Might need to put this in the createfs or open*/
+    return 0;
 }
