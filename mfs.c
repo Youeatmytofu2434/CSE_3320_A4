@@ -73,6 +73,7 @@ struct directory_entry * directory_ptr;
 // Metadata about the a particular file
 struct inode * inode_array_ptr[NUM_INODES];
 
+
 int findFreeDirectoryEntry( )
 {
     int i;
@@ -619,14 +620,20 @@ void createfs(char * filename)
     */
 
     ofp = fopen( filename, "wb" );
-    int offset = 0;
+
+    int i = 0;
+    size_t dir_ptr_size = NUM_FILES * sizeof( struct directory_entry );
+
+    size_t offset = 0;
     //creates a new file for writing
     fseek( ofp, offset, SEEK_SET );
-    //iterates through inode list to physically write everything from there to a binary file
-    int i = 0;
     
-    fwrite(directory_ptr, sizeof(struct directory_entry), 1, ofp);
+    fwrite(&directory_ptr, sizeof(struct directory_entry), NUM_FILES, ofp);
 
+    offset += dir_ptr_size;
+    //fseek( ofp, offset, SEEK_SET );
+
+    /*
     for( i = 0; i < NUM_INODES; i++ )
     {
         fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
@@ -638,10 +645,11 @@ void createfs(char * filename)
         fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
     }
 
-
+    */
     fclose(ofp);
     //free(newFsname);
     //memory for newFsname is no longer needed
+    
     return;
 }
 
@@ -653,16 +661,19 @@ void open( char * filename)
     //creates a new file for writing
     FILE *ofp;
     ofp = fopen( filename, "rb" );
-    int offset = 0;
-    //finds the beginning of the file
-    //fseek( ofp, 0, SEEK_SET );
-    fseek( ofp, offset, SEEK_SET );
-    //iterates through inode list to physically write everything from there to a binary file
+
     int i=0;
+    size_t dir_ptr_size = NUM_FILES * sizeof( struct directory_entry );
 
-    fread(directory_ptr, sizeof(struct directory_entry), 1, ofp);
+    size_t offset = 0;
+    fseek( ofp, offset, SEEK_SET );
+
+    fread( directory_ptr, sizeof( struct directory_entry ), NUM_FILES, ofp );
     
+    offset += dir_ptr_size;
+    //fseek( ofp, offset, SEEK_SET );
 
+    /*
     for(i=0; i<NUM_INODES; i++)
     {
         fread(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
@@ -672,8 +683,14 @@ void open( char * filename)
     {   
         fread(data_blocks[i], BLOCK_SIZE, 1, ofp);
     }
-    
+    */
     fclose(ofp);
+
+    for( i = 0; i < NUM_FILES; i++)
+    {
+        if( directory_ptr[i].valid == 1)
+            printf( "%d: %s\n", i, directory_ptr[i].name );
+    }
     return;
 }
 
@@ -681,13 +698,19 @@ void savefs(char * filename)
 {
     FILE *ofp;
     ofp = fopen( filename, "wb" );
-    int offset = 0;
+    
+    size_t dir_ptr_size = NUM_FILES * sizeof(struct directory_entry);
+
+    size_t offset = 0;
     fseek( ofp, offset, SEEK_SET );
-    //iterates through inode list to physically write everything from there to a binary file
+    
+    fwrite(&directory_ptr, sizeof(struct directory_entry), NUM_FILES, ofp);
+
+    offset += dir_ptr_size;
+    //fseek( ofp, offset, SEEK_SET );
+
+    /*
     int i=0;
-
-    fwrite(directory_ptr, sizeof(struct directory_entry), 1, ofp);
-
     for(i=0; i<NUM_INODES; i++)
     {
         //responsible for writing all inodes into disk
@@ -699,7 +722,7 @@ void savefs(char * filename)
         //responsible for writing all blocks on the directory of mfs into disk
         fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
     }
-    
+    */
     fclose(ofp);
     return;
 }
@@ -856,7 +879,7 @@ int main()
     /* Might need to put this in the createfs or open*/
     free( directory_ptr );
     for(int i = 0; i < NUM_INODES; i++)
-    free( inode_array_ptr[i]);
+        free( inode_array_ptr[i]);
     /* Might need to put this in the createfs or open*/
     return 0;
 }
