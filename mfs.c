@@ -46,6 +46,7 @@
 #define NUM_FILES 128
 #define NUM_INODES 128
 #define MAX_BLOCKS_PER_FILE 32
+#define MAX_BLOCK_WRITE 130
 
 unsigned char data_blocks[NUM_BLOCKS][BLOCK_SIZE];
          int  used_blocks[NUM_BLOCKS];
@@ -67,11 +68,30 @@ struct inode
     int readOnlyAttrib;
 };
 
+
 // List of files
 struct directory_entry * directory_ptr;
 
 // Metadata about the a particular file
 struct inode * inode_array_ptr[NUM_INODES];
+
+void init()
+{
+    /* Might need to put this in the createfs or open*/
+    
+    directory_ptr = malloc( NUM_FILES * sizeof(struct directory_entry));
+    for(int i = 0; i < NUM_INODES; i++)
+        inode_array_ptr[i] = malloc( sizeof( struct inode ) );
+    
+    /* Might need to put this in the createfs or open*/
+}
+
+void destroy()
+{
+    free( directory_ptr );
+    for(int i = 0; i < NUM_INODES; i++)
+        free( inode_array_ptr[i]);
+}
 
 
 int findFreeDirectoryEntry( )
@@ -135,6 +155,8 @@ int df()
     return count*BLOCK_SIZE;
 }
 
+// Check whether a file exists in FS
+// @param: char * filename
 int isFileExist( char * filename)
 {
     int retval = -1;
@@ -155,112 +177,72 @@ int isFileExist( char * filename)
     return retval;
 }
 
+// Copy a file and store info in FS
+// @param: char * filename
 void put(char * filename)
 {
     struct stat buf;
     
     //does the file exist?
-    int status = stat(filename, &buf);
+    int status = stat( filename, &buf );
     
     //if the file doesnt exists, bails out of function
-    if(status==-1)
+    if( status == -1 )
     {
-        printf("Error: File not found.\n");
+        printf( "Error: File not found.\n" );
         return;
     }
 
-    if(buf.st_size>df( ) )
+    if( buf.st_size > df() )
     {
-        printf("Error: Not enough room for file.\n");
+        printf( "Error: Not enough room for file.\n" );
         return;
     }
 
-    int dir_idx = findFreeDirectoryEntry( );
-    if(dir_idx==-1)
+    int dir_idx = findFreeDirectoryEntry();
+    if( dir_idx == -1 )
     {
-        printf("Error: Not enough room for file.\n");
+        printf( "Error: Not enough room for file.\n" );
         return;
     }
 
-    directory_ptr[dir_idx].valid=1;
-    directory_ptr[dir_idx].name = (char *)malloc(strlen(filename));
-    strncpy(directory_ptr[dir_idx].name,filename, strlen(filename));
+    directory_ptr[dir_idx].valid = 1;
+    directory_ptr[dir_idx].name  = (char *)malloc( strlen( filename ) );
+    strncpy( directory_ptr[dir_idx].name, filename, strlen( filename ) );
 
-    int inode_idx=findFreeInode( );
-    if(inode_idx==-1)
+    int inode_idx=findFreeInode();
+    if( inode_idx==-1 )
     {
-        printf("Error: No free inodes.\n");
+        printf( "Error: No free inodes.\n" );
         return;
     }
 
-    directory_ptr[dir_idx].inode_idx=inode_idx;
-    inode_array_ptr[inode_idx]->size=buf.st_size;
-    inode_array_ptr[inode_idx]->date=time(NULL);
-    inode_array_ptr[inode_idx]->valid=1;
-    inode_array_ptr[inode_idx]->hiddenAttrib=0;
-    inode_array_ptr[inode_idx]->readOnlyAttrib=0;
+    directory_ptr[dir_idx].inode_idx           = inode_idx;
+    inode_array_ptr[inode_idx]->size           = buf.st_size;
+    inode_array_ptr[inode_idx]->date           = time(NULL);
+    inode_array_ptr[inode_idx]->valid          = 1;
+    inode_array_ptr[inode_idx]->hiddenAttrib   = 0;
+    inode_array_ptr[inode_idx]->readOnlyAttrib = 0;
 
-    FILE * ifp = fopen(filename, "r");
+    FILE * ifp = fopen( filename, "r" );
 
-    int copy_size=buf.st_size;
-    int offset=0;
+    int copy_size = buf.st_size;
+    int offset    = 0;
 
-    int block_index=findFreeBlock( );
-    if(block_index==-1)
+    int block_index = findFreeBlock( );
+    if( block_index == -1 )
     {
-        printf("Error: Can't find free node blocks.\n");
-        //TODO: Clean up a bunch of directory and inode stuff
-        //This error means that there is a bug in the code and the files are messed up somehow
+        printf( "Error: Can't find free node blocks.\n" );
         return;
     }
 
-    /*
-    int index = 0;
-    while(copy_size>=BLOCK_SIZE)
-    {
-        fseek(ifp, offset, SEEK_SET);
-
-        // Read data from file and store them into our FS image
-        int bytes=fread(data_blocks[block_index], BLOCK_SIZE, 1, ifp);
-
-        if(bytes==0 && !feof(ifp) )
-        {
-            printf("An error occured reading from the input file.\n");
-            return;
-        }
-
-        inode_array_ptr[inode_idx]->blocks[index] = block_index;
-        used_blocks[block_index]=1;
-
-        clearerr(ifp);
-        copy_size   -=BLOCK_SIZE;
-        offset      +=BLOCK_SIZE;
-        index       ++;
-    }
-    //handles the remainder
-    if(copy_size>0)
-    {
-        int block_index=findFreeBlock( );
-        if(block_index==-1)
-        {
-            printf("Error: Can't find free block.\n");
-            //cleanup a bunch of directory and inode stuff
-            return;
-        }
-        inode_array_ptr[inode_idx]->blocks[index] = block_index;
-        used_blocks[block_index]=1;
-        
-
-        fseek(ifp, offset, SEEK_SET);
-        int bytes=fread(data_blocks[block_index], copy_size, 1, ifp);
-    }
-    */
-    
+    // Stores the index and the block index 
     int index = 0;
     int bytes = 0;
     while( copy_size > 0 )
     {
-        fseek( ifp, bytes, SEEK_SET);
+        fseek( ifp, bytes, SEEK_SET );
+
         if( copy_size < BLOCK_SIZE )
         {
             bytes = copy_size;
@@ -269,6 +251,7 @@ void put(char * filename)
         {
             bytes = BLOCK_SIZE;
         }
+
         int temp = fread(data_blocks[block_index], bytes, 1, ifp);
         if( temp == 0 && !feof( ifp ) )
         {
@@ -284,6 +267,7 @@ void put(char * filename)
         //printf("Block Index: %d\n", block_index);
         //printf("Inode Index: %d\n", inode_idx);
         //printf("Index: %d\n", index);
+
         used_blocks[block_index] = 1;
         copy_size               -= bytes;
         offset                  += bytes;
@@ -291,6 +275,8 @@ void put(char * filename)
         index                   ++;
     }
     
+    /*
+    // Prints what's inside our datablock
     printf( "Size of %s: %d bytes\n", filename, inode_array_ptr[inode_idx]->size );
     printf( "Data Stored:\n" );
     for( int i = 130; i < NUM_BLOCKS; i++ )
@@ -302,11 +288,12 @@ void put(char * filename)
         }
 
     }
-    
+    */
     fclose( ifp );
     return;
 }
 
+// List all files in the FS
 void list()
 {
     //flag variable
@@ -317,40 +304,6 @@ void list()
     time_t currentDate;
 
     int i=0;
-    /*
-    for(i=0; i<128; i++)
-    {
-        //if there is a file that is referenced by the index node
-        if(inode_array_ptr[i]->valid==1 && inode_array_ptr[i]->hiddenAttrib!=1)
-        {
-            //changes flag variable to signify that a file is found
-            noFilesFound=0;
-
-            //sets variables to be printed later
-            currentSize=inode_array_ptr[i]->size;
-            currentDate=inode_array_ptr[i]->date;
-
-            //allocates memory for the name variable to be printed later
-            //j is used as a failsafe measure in case we need to locate the inode
-            int j=0;
-            for(j=0; j<128; j++)
-            {
-                //makes the name of the file into the variable currentName...
-                //...when the directory has found the file with the correct inode ptr
-                if(directory_ptr[j].inode_idx==i)
-                {
-                    currentName=(char *) malloc(strlen(directory_ptr[i].name));
-                    strncpy(currentName,directory_ptr[i].name,strlen(directory_ptr[i].name));
-                    break;
-                }
-            }
-            printf("%d %s %s \n",currentSize,currentName,ctime(&currentDate));
-            int temp_size = strlen( currentName );
-            memset( currentName, 0, temp_size );
-            
-        }
-    }
-    */
 
     for( i = 0; i < NUM_FILES; i++ )
     {
@@ -381,6 +334,7 @@ void list()
 }
 
 
+// 
 void del( char * filename)
 {
     //flag variable
@@ -604,282 +558,256 @@ void get( char * filename, char * output_fileName )
 
 void createfs(char * filename)
 {
+    init();
+
+    //creates a new file for writing
     FILE *ofp;
-
-    /*
-    //creates a new name to create a file
-    char * newFsname;
-    char * dotBinExtension;
-    newFsname=(char *)malloc(strlen(fsname)+4);
-    dotBinExtension=(char *)malloc(4);
-    strncpy(dotBinExtension,".bin",4);
-    strncpy(newFsname,fsname,strlen(fsname));
-    strncat(newFsname,dotBinExtension,4);
-    free(dotBinExtension);
-    //memory allocated with dotBin is no longer needed
-    */
-
     ofp = fopen( filename, "wb" );
 
     int i = 0;
     size_t dir_ptr_size = NUM_FILES * sizeof( struct directory_entry );
 
+    // offset to write 
     size_t offset = 0;
-    //creates a new file for writing
+    
     fseek( ofp, offset, SEEK_SET );
     
-    fwrite(&directory_ptr, sizeof(struct directory_entry), NUM_FILES, ofp);
-
+    //responsible for writing all inodes into disk
+    fwrite( &directory_ptr, sizeof(struct directory_entry ), NUM_FILES, ofp );
     offset += dir_ptr_size;
-    //fseek( ofp, offset, SEEK_SET );
+    fseek( ofp, offset, SEEK_SET );
 
-    /*
-    for( i = 0; i < NUM_INODES; i++ )
-    {
-        fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
-    }
+    //responsible for writing all inodes into disk
+    fwrite(&inode_array_ptr, sizeof(struct inode), NUM_INODES, ofp);
+    offset += sizeof(struct inode) * NUM_INODES;
+    fseek( ofp, offset, SEEK_SET );
+
+    //responsible for writing all blocks on the directory of mfs into disk
+    fwrite(&data_blocks, BLOCK_SIZE, NUM_BLOCKS, ofp);
+    offset += BLOCK_SIZE;
+    fseek( ofp, offset, SEEK_SET );
+
     
-    for( i = 130; i < NUM_BLOCKS; i++ )
-    {    
-        //responsible for writing all blocks on the directory of mfs into disk
-        fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
-    }
-
-    */
     fclose(ofp);
-    //free(newFsname);
-    //memory for newFsname is no longer needed
     
     return;
 }
 
 void open( char * filename)
 {
-    //TODO: FInd out if file is not found/exists
+    init();
 
-    
     //creates a new file for writing
     FILE *ofp;
     ofp = fopen( filename, "rb" );
 
-    int i=0;
     size_t dir_ptr_size = NUM_FILES * sizeof( struct directory_entry );
 
     size_t offset = 0;
     fseek( ofp, offset, SEEK_SET );
-
-    fread( directory_ptr, sizeof( struct directory_entry ), NUM_FILES, ofp );
     
+    //responsible for writing all inodes into disk
+    fread( &directory_ptr, sizeof( struct directory_entry ), NUM_FILES, ofp );
     offset += dir_ptr_size;
-    //fseek( ofp, offset, SEEK_SET );
+    fseek( ofp, offset, SEEK_SET );
 
-    /*
-    for(i=0; i<NUM_INODES; i++)
-    {
-        fread(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
-    }
+    //responsible for writing all inodes into disk
+    fread(&inode_array_ptr, sizeof(struct inode), NUM_INODES, ofp);
+    offset += sizeof(struct inode) * NUM_INODES;
+    fseek( ofp, offset, SEEK_SET );
 
-    for(i=130; i<NUM_BLOCKS; i++)
-    {   
-        fread(data_blocks[i], BLOCK_SIZE, 1, ofp);
-    }
-    */
+    //responsible for writing all blocks on the directory of mfs into disk
+    fread(&data_blocks, BLOCK_SIZE, NUM_BLOCKS, ofp);
+    offset += NUM_BLOCKS * BLOCK_SIZE;
+    fseek( ofp, offset, SEEK_SET );
+
     fclose(ofp);
-
-    for( i = 0; i < NUM_FILES; i++)
-    {
-        if( directory_ptr[i].valid == 1)
-            printf( "%d: %s\n", i, directory_ptr[i].name );
-    }
     return;
 }
 
 void savefs(char * filename)
 {
+
     FILE *ofp;
     ofp = fopen( filename, "wb" );
     
     size_t dir_ptr_size = NUM_FILES * sizeof(struct directory_entry);
 
+    // offset to write 
     size_t offset = 0;
+    
     fseek( ofp, offset, SEEK_SET );
     
-    fwrite(&directory_ptr, sizeof(struct directory_entry), NUM_FILES, ofp);
-
+    //responsible for writing all inodes into disk
+    fwrite( &directory_ptr, sizeof(struct directory_entry ), NUM_FILES, ofp );
     offset += dir_ptr_size;
-    //fseek( ofp, offset, SEEK_SET );
+    fseek( ofp, offset, SEEK_SET );
 
-    /*
-    int i=0;
-    for(i=0; i<NUM_INODES; i++)
-    {
-        //responsible for writing all inodes into disk
-        fwrite(inode_array_ptr[i], sizeof(struct inode), 1, ofp);
-    }
-    
-    for(i=130; i<NUM_BLOCKS; i++)
-    {    
-        //responsible for writing all blocks on the directory of mfs into disk
-        fwrite(data_blocks[i], BLOCK_SIZE, 1, ofp);
-    }
-    */
+    //responsible for writing all inodes into disk
+    fwrite(&inode_array_ptr, sizeof(struct inode), NUM_INODES, ofp);
+    offset += sizeof(struct inode) * NUM_INODES;
+    fseek( ofp, offset, SEEK_SET );
+
+    //responsible for writing all blocks on the directory of mfs into disk
+    fwrite(&data_blocks, BLOCK_SIZE, NUM_BLOCKS, ofp);
+    offset += NUM_BLOCKS * BLOCK_SIZE;
+    fseek( ofp, offset, SEEK_SET );
     fclose(ofp);
     return;
 }
 
+//init in main, open createfs
+
 int main()
-{
-    /* Might need to put this in the createfs or open*/
-    directory_ptr = malloc( NUM_FILES * sizeof(struct directory_entry));
-    for(int i = 0; i < NUM_INODES; i++)
-        inode_array_ptr[i] = malloc( sizeof( struct inode ) );
-    /* Might need to put this in the createfs or open*/
+{   
+    init();
     char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
+    int isFSExist = 0;
 
     while( 1 )
     {
-    // Print out the mfs prompt
-    printf ("mfs> ");
+        // Print out the mfs prompt
+        printf ("mfs> ");
 
-    // Read the command from the commandline.  The
-    // maximum command that will be read is MAX_COMMAND_SIZE
-    // This while command will wait here until the user
-    // inputs something since fgets returns NULL when there
-    // is no input
-    while( !fgets (cmd_str, MAX_COMMAND_SIZE, stdin) );
+        // Read the command from the commandline.  The
+        // maximum command that will be read is MAX_COMMAND_SIZE
+        // This while command will wait here until the user
+        // inputs something since fgets returns NULL when there
+        // is no input
+        while( !fgets (cmd_str, MAX_COMMAND_SIZE, stdin) );
 
-    /* Parse input */
-    char *token[MAX_NUM_ARGUMENTS];
+        /* Parse input */
+        char *token[MAX_NUM_ARGUMENTS];
 
-    int   token_count = 0;                                 
-                                                            
-    // Pointer to point to the token
-    // parsed by strsep
-    char *arg_ptr;                                         
-                                                            
-    char *working_str  = strdup( cmd_str );                
+        int   token_count = 0;                                 
+                                                                
+        // Pointer to point to the token
+        // parsed by strsep
+        char *arg_ptr;                                         
+                                                                
+        char *working_str  = strdup( cmd_str );                
 
-    // we are going to move the working_str pointer so
-    // keep track of its original value so we can deallocate
-    // the correct amount at the end
-    char *working_root = working_str;
+        // we are going to move the working_str pointer so
+        // keep track of its original value so we can deallocate
+        // the correct amount at the end
+        char *working_root = working_str;
 
-    // Tokenize the input stringswith whitespace used as the delimiter
-    while ( ( (arg_ptr = strsep(&working_str, WHITESPACE ) ) != NULL) && 
-                (token_count<MAX_NUM_ARGUMENTS))
-    {
-        token[token_count] = strndup( arg_ptr, MAX_COMMAND_SIZE );
-        if( strlen( token[token_count] ) == 0 )
+        // Tokenize the input stringswith whitespace used as the delimiter
+        while ( ( (arg_ptr = strsep(&working_str, WHITESPACE ) ) != NULL) && 
+                    (token_count<MAX_NUM_ARGUMENTS))
         {
-        token[token_count] = NULL;
+            token[token_count] = strndup( arg_ptr, MAX_COMMAND_SIZE );
+            if( strlen( token[token_count] ) == 0 )
+            {
+            token[token_count] = NULL;
+            }
+            token_count++;
         }
-        token_count++;
+
+        if( token[0] != NULL )
+        {
+            if ( strcmp( token[0] , "quit" ) == 0 )
+            {
+                free( working_root );
+                break;
+            }
+            else if( strcmp( token[0] , "put" ) == 0 )
+            {
+                if( token[1] == NULL )
+                {
+                    printf("Error: put <filename>\n");
+                }
+                else
+                {
+                    //printf("%s\n", token[1] );
+                    put( token[1] );
+                }
+            }
+            else if( strcmp( token[0] , "df") == 0 )
+            {
+                printf("%d bytes free\n",df());
+            }
+            else if( strcmp( token[0] , "list") == 0 )
+            {
+                list();
+            }
+            else if( strcmp( token[0] , "get" ) == 0 )
+            {
+                // Prints error if not enough arguments
+                if( token[1] == NULL )
+                {
+                    printf("Error: get <filename> (optional)<newfilename>\n");
+                }
+                // not providing output file
+                else if( token[2] == NULL ) 
+                {
+                    get( token[1], token[1] );
+                }
+                else
+                {
+                    get( token[1], token[2] );
+                }
+            }
+            else if( strcmp( token[0] , "del") == 0 )
+            {
+                if( token[1] == NULL )
+                {
+                    printf("Error: del <filename>\n");
+                }
+                else
+                {
+                    //printf("%s\n", token[1] );
+                    del( token[1] );
+                }
+            }
+            else if( strcmp( token[0] , "undel") == 0 )
+            {
+                if( token[1] == NULL )
+                {
+                    printf("Error: undel <filename>\n");
+                }
+                else
+                {
+                    //printf("%s\n", token[1] );
+                    undel( token[1] );
+                }
+            }
+            else if( strcmp( token[0] , "attrib") == 0 )
+            {
+                //TODO: Error handling on no arguments later.
+                attrib(token[1],token[2]);
+            }
+            else if( strcmp( token[0] , "createfs") == 0 )
+            {
+                isFSExist = 1;
+                //TODO: Error handling on no file name later
+                createfs(token[1]);
+            }
+            else if( strcmp( token[0] , "open") == 0 )
+            {
+                isFSExist = 1;
+                //TODO: Error handling on no file name later
+                open(token[1]);
+            }
+            
+            else if( strcmp( token[0] , "savefs") == 0 )
+            {
+                savefs(token[1]);
+            }
+            /*
+            else if( strcmp( token[0] , "close") == 0 )
+            */
+            /*
+            if( isFileExist != 1 )
+            {
+                printf( "No FS found!\n" );
+            }
+            */
+        }
+
+        free( working_root );
     }
 
-    if( token[0] != NULL )
-    {
-        if ( strcmp( token[0] , "quit" ) == 0 )
-        {
-            free( working_root );
-            break;
-        }
-        else if( strcmp( token[0] , "put" ) == 0 )
-        {
-            if( token[1] == NULL )
-            {
-                printf("Error: put <filename>\n");
-            }
-            else
-            {
-                //printf("%s\n", token[1] );
-                put( token[1] );
-            }
-        }
-
-        else if( strcmp( token[0] , "df") == 0 )
-        {
-            printf("%d bytes free\n",df());
-        }
-        else if( strcmp( token[0] , "list") == 0 )
-        {
-            list();
-        }
-        else if( strcmp( token[0] , "get" ) == 0 )
-        {
-            // Prints error if not enough arguments
-            if( token[1] == NULL )
-            {
-                printf("Error: get <filename> (optional)<newfilename>\n");
-            }
-            // not providing output file
-            else if( token[2] == NULL ) 
-            {
-                get( token[1], token[1] );
-            }
-            else
-            {
-                get( token[1], token[2] );
-            }
-        }
-        else if( strcmp( token[0] , "del") == 0 )
-        {
-            if( token[1] == NULL )
-            {
-                printf("Error: del <filename>\n");
-            }
-            else
-            {
-                //printf("%s\n", token[1] );
-                del( token[1] );
-            }
-        }
-        else if( strcmp( token[0] , "undel") == 0 )
-        {
-            if( token[1] == NULL )
-            {
-                printf("Error: undel <filename>\n");
-            }
-            else
-            {
-                //printf("%s\n", token[1] );
-                undel( token[1] );
-            }
-        }
-        else if( strcmp( token[0] , "attrib") == 0 )
-        {
-            //TODO: Error handling on no arguments later.
-            attrib(token[1],token[2]);
-        }
-        else if( strcmp( token[0] , "createfs") == 0 )
-        {
-            //TODO: Error handling on no file name later
-            createfs(token[1]);
-        }
-        else if( strcmp( token[0] , "open") == 0 )
-        {
-            //TODO: Error handling on no file name later
-            open(token[1]);
-        }
-        
-        else if( strcmp( token[0] , "savefs") == 0 )
-        {
-            savefs(token[1]);
-        }
-        /*
-        
-        
-        else if( strcmp( token[0] , "close") == 0 )
-        
-        */
-    }
-
-    free( working_root );
-    }
-
-    /* Might need to put this in the createfs or open*/
-    free( directory_ptr );
-    for(int i = 0; i < NUM_INODES; i++)
-        free( inode_array_ptr[i]);
-    /* Might need to put this in the createfs or open*/
+    destroy();
     return 0;
 }
