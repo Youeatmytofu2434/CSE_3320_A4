@@ -1,3 +1,11 @@
+/***************************************
+
+//Man Luu 1001654911
+//Christopher Nguyen 1001676089
+
+*////////////////////////////////////
+
+
 // The MIT License (MIT)
 // 
 // Copyright (c) 2016, 2017 Trevor Bakker 
@@ -183,7 +191,7 @@ void put(char * filename)
 {
     struct stat buf;
     
-    //does the file exist?
+    //Finds out if the file exists within the current working directory
     int status = stat( filename, &buf );
     
     //if the file doesnt exists, bails out of function
@@ -192,20 +200,20 @@ void put(char * filename)
         printf( "Error: File not found.\n" );
         return;
     }
-
+    //if the size of the file is bigger than what the file system allows, bails out of function
     if( buf.st_size > df() )
     {
         printf( "Error: Not enough room for file.\n" );
         return;
     }
-
+    
     int dir_idx = findFreeDirectoryEntry();
     if( dir_idx == -1 )
     {
         printf( "Error: Not enough room for file.\n" );
         return;
     }
-
+    //allocates a name towards a part of the directory
     directory_ptr[dir_idx].valid = 1;
     directory_ptr[dir_idx].name  = (char *)malloc( strlen( filename ) );
     strncpy( directory_ptr[dir_idx].name, filename, strlen( filename ) );
@@ -217,6 +225,7 @@ void put(char * filename)
         return;
     }
 
+    //set initial values for the element at its indexed location to set metadata
     directory_ptr[dir_idx].inode_idx           = inode_idx;
     inode_array_ptr[inode_idx]->size           = buf.st_size;
     inode_array_ptr[inode_idx]->date           = time(NULL);
@@ -225,7 +234,7 @@ void put(char * filename)
     inode_array_ptr[inode_idx]->readOnlyAttrib = 0;
 
     FILE * ifp = fopen( filename, "r" );
-
+    //determines if there are any free blocks to be allocated into, and the block's respective index
     int copy_size = buf.st_size;
     int offset    = 0;
 
@@ -346,8 +355,10 @@ void del( char * filename)
         //if there is a file that is referenced by the index node
         if(inode_array_ptr[i]->valid==1 && inode_array_ptr[i]->readOnlyAttrib!=1)
         {
+            //if there is a file that is found through the iterative loop
             if(strcmp(filename,directory_ptr[i].name)==0)
             {
+                //marks the inode as free to be overwritten
                 noFilesFound=0;
                 inode_array_ptr[i]->valid=0;
                 printf("File deleted.\n");
@@ -355,6 +366,7 @@ void del( char * filename)
             }
         }
     }
+    //if there is nothing found, the process complains
     if(noFilesFound==1)
     {
         //happens when no files are found
@@ -373,6 +385,7 @@ void undel( char * filename)
         //if there is a file that is referenced by the index node
         if(inode_array_ptr[i]->valid==1)
         {
+            //if a file is found, the file will be put back as if it was not deleted
             if(strcmp(filename,directory_ptr[i].name)==0)
             {
                 noFilesFound=0;
@@ -394,21 +407,27 @@ void attrib(char * attribInput, char * filename)
     //flag variable
     int noFilesFound = 1;
 
+    //Intended to iterate through the inode array to find the proper file
+    //And then set or remove an attribute to the found file
     int i=0;
     for(i=0; i<128; i++)
     {
         //if there is a file that is referenced by the index node
         if(inode_array_ptr[i]->valid==1)
         {
+            //finds the file through a linear search method
             if(strcmp(filename,directory_ptr[i].name)==0)
             {
                 noFilesFound=0;
+                //adds attribute
                 if(attribInput[0]=='+')
                 {
+                    //read only attribute
                     if(attribInput[1]=='r')
                     {
                         inode_array_ptr[i]->readOnlyAttrib=1;
                     }
+                    //hidden attribute
                     else if(attribInput[1]=='h')
                     {
                         inode_array_ptr[i]->hiddenAttrib=1;
@@ -418,12 +437,15 @@ void attrib(char * attribInput, char * filename)
                         printf("Error: Invalid second token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
                     }
                 }
+                //subtracts attribute
                 else if(attribInput[0]=='-')
                 {
+                    //read only attribute
                     if(attribInput[1]=='r')
                     {
                         inode_array_ptr[i]->readOnlyAttrib=0;
                     }
+                    //hidden attribute
                     else if(attribInput[1]=='h')
                     {
                         inode_array_ptr[i]->hiddenAttrib=0;
@@ -433,6 +455,7 @@ void attrib(char * attribInput, char * filename)
                         printf("Error: Invalid second token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
                     }
                 }
+                //wrong token
                 else
                 {
                     printf("Error: Invalid first token. You must use '+'/'-' followed by EITHER 'h' or 'r'. Example: \"+h\"\n");
